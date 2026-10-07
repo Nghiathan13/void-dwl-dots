@@ -1,0 +1,7 @@
+case "$1" in
+	up) wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+        	[ "$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print ($2>1)}')" = 1 ] && wpctl set-volume @DEFAULT_AUDIO_SINK@ 100% ;;
+     	down) wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- ;;
+     	mute) wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle ;;
+esac
+pkill -USR1 slstatus
