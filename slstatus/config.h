@@ -64,13 +64,42 @@ static const char unknown_str[] = "n/a";
  * wifi_essid          WiFi ESSID                      interface name (wlan0)
  * wifi_perc           WiFi signal in percent          interface name (wlan0)
  */
+/* battery pill: icon by level (90/65/40/15) + bolt right of icon when charging */
 static const struct arg args[] = {
-	/* function format                 argument */
-	{ run_command,   "\uf028 %s | ",   "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{printf \"%d%%\", $2*100}'" },
-	{ battery_perc,  "\uf240 %s%% ",   "BAT0" },
-	{ battery_state, "%s | ",          "BAT0" },
-	{ wifi_perc,     "\uf1eb %s%% ",   "wlo1" },
-	{ wifi_essid,    "%s | ",          "wlo1" },
-	{ run_command,   "%s | ",          "n=$(fcitx5-remote -n 2>/dev/null); case \"$n\" in *unikey*) echo VI;; *) echo EN;; esac" },
-	{ datetime,      "%s",             "%F %T" },
+	/* function    	format                    	argument */
+	{ run_command, "^bg(1a1a1a) %s ^bg() ",
+		"v=$(wpctl get-volume @DEFAULT_AUDIO_SINK@); "
+		"case \"$v\" in *MUTED*) printf '%b MUTE' \"\\357\\200\\246\";; "
+		"*) p=$(printf '%s' \"$v\" | awk '{printf \"%d\", $2*100}'); "
+		"if [ \"$p\" -le 0 ]; then i=\"\\357\\200\\246\"; "
+		"elif [ \"$p\" -lt 40 ]; then i=\"\\357\\200\\247\"; "
+		"else i=\"\\357\\200\\250\"; fi; "
+		"printf '%b %s%%' \"$i\" \"$p\";; "
+		"esac" },
+	{ run_command, "^bg(1a1a1a) %s ^bg() ",
+		"c=$(cat /sys/class/power_supply/BAT0/capacity); "
+		"s=$(cat /sys/class/power_supply/BAT0/status); "
+		"if [ \"$c\" -ge 90 ]; then i='\\357\\211\\200';"
+		"elif [ \"$c\" -ge 65 ]; then i='\\357\\211\\201';"
+		"elif [ \"$c\" -ge 40 ]; then i='\\357\\211\\202';"
+		"elif [ \"$c\" -ge 15 ]; then i='\\357\\211\\203';"
+		"else i='\\357\\211\\204'; fi;"
+		"if [ \"$s\" = Charging ]; then b='\\357\\203\\247 ';"
+		"else b=''; fi;"
+		"printf '%b %b%s%%' \"$i\" \"$b\" \"$c\"" },
+	{ run_command, "^bg(1a1a1a) %s ^bg() ",
+		"st=$(cat /sys/class/net/wlo1/operstate 2>/dev/null); "
+		"if [ \"$st\" != up ]; then printf '%b OFF' \"\\363\\260\\244\\257\"; "
+		"else q=$(awk '/wlo1:/ {print int($3*100/70)}' /proc/net/wireless 2>/dev/null); "
+		"e=$(iw dev wlo1 link 2>/dev/null | awk '/SSID:/ {sub(/^[ \\t]*SSID: /, \"\"); "
+		"print}'); "
+		"[ -z \"$q\" ] && q=0; "
+		"if [ \"$q\" -ge 75 ]; then i=\"\\363\\260\\244\\250\"; "
+		"elif [ \"$q\" -ge 50 ]; then i=\"\\363\\260\\244\\245\"; "
+		"elif [ \"$q\" -ge 30 ]; then i=\"\\363\\260\\244\\242\"; "
+		"else i=\"\\363\\260\\244\\237\"; fi; "
+		"printf '%b %s%% %s' \"$i\" \"$q\" \"$e\"; "
+		"fi" },
+	{ run_command, 	"^bg(1a1a1a) %s ^bg() ",        "n=$(fcitx5-remote -n 2>/dev/null); case \"$n\" in *unikey*) echo VI;; *) echo EN;; esac" },
+	{ datetime,    	"^bg(1a1a1a) %s ^bg()",         "%F %T" },
 };

@@ -23,7 +23,7 @@ static bool custom_title = false;
 // title color use active colors
 static bool active_color_title = true;
 // scale
-static uint32_t buffer_scale = 1;
+static uint32_t buffer_scale = 2;
 // font
 static char *fontstr = "monospace:size=16";
 // tag names
@@ -36,8 +36,8 @@ static pixman_color_t active_bg_color = HEX_COLOR(0x005577ff);
 static pixman_color_t occupied_fg_color = HEX_COLOR(0xeeeeeeff);
 static pixman_color_t occupied_bg_color = HEX_COLOR(0x005577ff);
 static pixman_color_t inactive_fg_color = HEX_COLOR(0xbbbbbbff);
-static pixman_color_t inactive_bg_color = HEX_COLOR(0x222222ff);
+static pixman_color_t inactive_bg_color = HEX_COLOR(0x000000ff);
 static pixman_color_t urgent_fg_color = HEX_COLOR(0x222222ff);
 static pixman_color_t urgent_bg_color = HEX_COLOR(0xeeeeeeff);
-static pixman_color_t middle_bg_color = HEX_COLOR(0x222222ff);
+static pixman_color_t middle_bg_color = HEX_COLOR(0x000000ff);
 static pixman_color_t middle_bg_color_selected = HEX_COLOR(0x005577ff);
