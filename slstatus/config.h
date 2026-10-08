@@ -64,19 +64,20 @@ static const char unknown_str[] = "n/a";
  * wifi_essid          WiFi ESSID                      interface name (wlan0)
  * wifi_perc           WiFi signal in percent          interface name (wlan0)
  */
-/* battery pill: icon by level (90/65/40/15) + bolt right of icon when charging */
+
 static const struct arg args[] = {
 	/* function    	format                    	argument */
-	{ run_command, "^bg(1a1a1a) %s ^bg() ",
-		"v=$(wpctl get-volume @DEFAULT_AUDIO_SINK@); "
-		"case \"$v\" in *MUTED*) printf '%b MUTE' \"\\357\\200\\246\";; "
-		"*) p=$(printf '%s' \"$v\" | awk '{printf \"%d\", $2*100}'); "
-		"if [ \"$p\" -le 0 ]; then i=\"\\357\\200\\246\"; "
-		"elif [ \"$p\" -lt 40 ]; then i=\"\\357\\200\\247\"; "
-		"else i=\"\\357\\200\\250\"; fi; "
-		"printf '%b %s%%' \"$i\" \"$p\";; "
-		"esac" },
-	{ run_command, "^bg(1a1a1a) %s ^bg() ",
+      	{ run_command, 	"^bg(1a1a1a) %s ^bg() ",
+         	"v=$(wpctl get-volume @DEFAULT_AUDIO_SINK@); "
+         	"case \"$v\" in *MUTED*) printf '%b' \"\\363\\260\\235\\237\";; "
+         	"*) p=$(printf '%s' \"$v\" | awk '{printf \"%d\", $2*100}'); "
+         	"if [ \"$p\" -le 0 ]; then i=\"\\363\\260\\226\\201\"; "
+         	"elif [ \"$p\" -lt 35 ]; then i=\"\\363\\260\\225\\277\"; "
+         	"elif [ \"$p\" -lt 70 ]; then i=\"\\363\\260\\226\\200\"; "
+         	"else i=\"\\363\\260\\225\\276\"; fi; "
+         	"printf '%b %s%%' \"$i\" \"$p\";; "
+         	"esac" },
+	{ run_command, 	"^bg(1a1a1a) %s ^bg() ",
 		"c=$(cat /sys/class/power_supply/BAT0/capacity); "
 		"s=$(cat /sys/class/power_supply/BAT0/status); "
 		"if [ \"$c\" -ge 90 ]; then i='\\357\\211\\200';"
@@ -87,7 +88,7 @@ static const struct arg args[] = {
 		"if [ \"$s\" = Charging ]; then b='\\357\\203\\247 ';"
 		"else b=''; fi;"
 		"printf '%b %b%s%%' \"$i\" \"$b\" \"$c\"" },
-	{ run_command, "^bg(1a1a1a) %s ^bg() ",
+	{ run_command, 	"^bg(1a1a1a) %s ^bg() ",
 		"st=$(cat /sys/class/net/wlo1/operstate 2>/dev/null); "
 		"if [ \"$st\" != up ]; then printf '%b OFF' \"\\363\\260\\244\\257\"; "
 		"else q=$(awk '/wlo1:/ {print int($3*100/70)}' /proc/net/wireless 2>/dev/null); "

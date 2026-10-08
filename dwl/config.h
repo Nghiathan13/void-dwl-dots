@@ -6,9 +6,9 @@
 /* appearance */
 static const int sloppyfocus               = 1;  /* focus follows mouse */
 static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
-static const unsigned int borderpx         = 1;  /* border pixel of windows */
+static const unsigned int borderpx         = 0;  /* border pixel of windows */
 static const unsigned int snap             = 32; /* snap pixel */
-static const float rootcolor[]             = COLOR(0x222222ff);
+static const float rootcolor[]             = COLOR(0x000000ff);
 static const float bordercolor[]           = COLOR(0x444444ff);
 static const float focuscolor[]            = COLOR(0x005577ff);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
@@ -20,6 +20,14 @@ static const float fullscreen_bg[]         = {0.0f, 0.0f, 0.0f, 1.0f}; /* You ca
 
 /* logging */
 static int log_level = WLR_ERROR;
+
+/* autostart (killed with dwl; wrap pipelines in sh -c) */
+static const char *const autostart[] = {
+	"sh", "-c", "slstatus -s | dwlb -status-stdin all", NULL,
+	"fcitx5", NULL,
+	"sh", "-c", "dbus-monitor --session \"sender='org.fcitx.Fcitx5'\" 2>/dev/null | while read -r _; do pkill -USR1 slstatus; done", NULL,
+	NULL /* terminate */
+};
 
 static const Rule rules[] = {
 	/* app_id             title       tags mask     isfloating   monitor */
@@ -171,7 +179,7 @@ static const Key keys[] = {
 
 static const Button buttons[] = {
 	{ MODKEY, BTN_LEFT,   moveresize,     {.ui = CurMove} },
-	{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
+	{ MODKEY, BTN_MIDDLE, moveresize,     {.ui = Curmfact} },
 	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
 };
 

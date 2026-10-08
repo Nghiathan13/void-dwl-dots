@@ -5,13 +5,9 @@ export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 
+# Session-level audio services: outlive dwl, started before it
 pipewire &
 wireplumber &
 
-dwl -s 'dwlb -font "monospace:size=12"' &
-until ls "$XDG_RUNTIME_DIR"/dwlb/* >/dev/null 2>&1; do
-  sleep 0.1
-done
-fcitx5 &
-dbus-monitor --session "sender='org.fcitx.Fcitx5'" 2>/dev/null | while read -r _; do pkill -USR1 slstatus; done &
-slstatus -s | dwlb -status-stdin all
+# tag bar via -s (live tag status); rest via autostart[]
+exec dwl -s 'dwlb -font "monospace:size=12"'
